@@ -27,7 +27,7 @@ jobs:
       run: npm run test:unit
     - name: Display softuni username
       run: echo "filip_popov"
-      
+
   run-ui-test:
     needs: run-unit-test
     runs-on: ubuntu-latest
@@ -48,3 +48,19 @@ jobs:
         run: npm run start &
       - name: Run the UI tests
         run: npm run test:ui
+
+  deploy-production:
+    needs: run-ui-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+      - name: Use JorgeLNJunior for deploy on render
+        uses: JorgeLNJunior/render-deploy@v1.4.4
+        with:
+          service_id: ${{ secrets.MY_RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.MY_RENDER_API_KEY }}
+          wait_deploy: true
